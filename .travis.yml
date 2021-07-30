@@ -1,24 +1,27 @@
+dist: trusty
 
-# paste config here
 language: java
 
 jdk:
- - oraclejdk8
+  - oraclejdk8
 
-sudo: true
+os:
+  - linux
+
+branches:
+  only:
+    - master
 
 cache:
   directories:
-  - $HOME/.m2
   - $HOME/.gradle
 
-
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
+  - git fetch
+  - git checkout -b gh-pages
+  - git merge origin/master
+  - git rm --cached --ignore-unmatch index.html
 
-
-
-
-
+script:
+  - ./gradlew clean publish -i --continue
+  - ./gradlew -b finalize.gradle finalize -i
